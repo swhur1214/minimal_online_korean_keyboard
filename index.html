@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korean Keyboard</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <style>
+        :root {
+            --bg: #1e1f23;
+            --text: #e8e8ec;
+            --muted: #97979f;
+            --border: rgba(255, 255, 255, 0.11);
+            --hover: rgba(255, 255, 255, 0.07);
+            --active: rgba(255, 255, 255, 0.15);
+            --accent: #7c9bff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", "Noto Sans KR", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            padding: 6vh 20px 40px;
+        }
+
+        .wrap {
+            width: 100%;
+            max-width: 620px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .font-btn {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 4px 8px;
+            line-height: 1;
+        }
+
+        .font-btn:hover {
+            background: var(--hover);
+            color: var(--text);
+        }
+
+        .font-btn.active {
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
+        }
+
+        .title {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: .02em;
+            color: var(--muted);
+        }
+
+        .hint {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .mode-badge {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            padding: 4px 9px;
+            border-radius: 3px;
+            color: var(--bg);
+            background: var(--text);
+        }
+
+        .mode-badge.off {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 10px 0 16px;
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 440px;
+            font-size: 19px;
+            line-height: 1.6;
+            padding: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.045);
+            color: var(--text);
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        textarea::placeholder {
+            color: var(--muted);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .key-row {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .key {
+            position: relative;
+            width: 48px;
+            height: 52px;
+            border-radius: 3px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: background .12s ease;
+        }
+
+        .key:hover {
+            background: var(--hover);
+        }
+
+        .key:active {
+            background: var(--active);
+        }
+
+        .key .jamo {
+            font-size: 17px;
+            font-weight: 500;
+        }
+
+        .key .letter {
+            font-size: 9px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .key .shift-jamo {
+            position: absolute;
+            top: 3px;
+            right: 5px;
+            font-size: 9px;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .key.special {
+            width: auto;
+            min-width: 52px;
+            padding: 0 12px;
+            font-size: 15px;
+            color: var(--muted);
+        }
+
+        .key.special.space {
+            min-width: 220px;
+        }
+
+        .key.special#shiftToggle.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding-top: 6vh;
+            }
+
+            textarea {
+                height: 320px;
+            }
+
+            .key {
+                width: 28px;
+                height: 42px;
+            }
+
+            .key .jamo {
+                font-size: 14px;
+            }
+
+            .key .letter {
+                font-size: 7px;
+            }
+
+            .key .shift-jamo {
+                font-size: 7px;
+                top: 2px;
+                right: 3px;
+            }
+
+            .key.special.space {
+                min-width: 140px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <span class="title">Minimal Online Korean Keyboard</span>
+        </header>
+
+        <textarea id="output" lang="ko" rows="16" placeholder="입력…" autocomplete="off" autocorrect="off"
+            autocapitalize="off" spellcheck="false"></textarea>
+
+        <div class="footer">
+            <div class="controls">
+                <button id="fontDown" class="font-btn" type="button" title="Decrease font size">A−</button>
+                <button id="fontUp" class="font-btn" type="button" title="Increase font size">A+</button>
+                <button id="kbToggle" class="font-btn" type="button" title="Show/hide keyboard">⌨</button>
+            </div>
+            <div class="toggle-group">
+                <span class="hint">Ctrl/Cmd+Space to toggle</span>
+                <span id="modeBadge" class="mode-badge" title="Ctrl/Cmd+Space to switch">KR</span>
+            </div>
+        </div>
+
+        <div id="keyboard" class="keyboard"></div>
+    </div>
+
+    <script>
+        (function () {
+            "use strict";
+
+            // ---- Standard Unicode Hangul composition tables ----
+            var INITIAL_LIST = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+            var MEDIAL_LIST = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
+            var FINAL_LIST = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+            var COMPOUND_VOWEL = {
+                'ㅗㅏ': 'ㅘ', 'ㅗㅐ': 'ㅙ', 'ㅗㅣ': 'ㅚ',
+                'ㅜㅓ': 'ㅝ', 'ㅜㅔ': 'ㅞ', 'ㅜㅣ': 'ㅟ',
+                'ㅡㅣ': 'ㅢ'
+            };
+            var COMPOUND_FINAL = {
+                'ㄱㅅ': 'ㄳ', 'ㄴㅈ': 'ㄵ', 'ㄴㅎ': 'ㄶ', 'ㄹㄱ': 'ㄺ', 'ㄹㅁ': 'ㄻ',
+                'ㄹㅂ': 'ㄼ', 'ㄹㅅ': 'ㄽ', 'ㄹㅌ': 'ㄾ', 'ㄹㅍ': 'ㄿ', 'ㄹㅎ': 'ㅀ', 'ㅂㅅ': 'ㅄ'
+            };
+            var DECOMPOSE_FINAL = {};
+            FINAL_LIST.forEach(function (f) { if (f) DECOMPOSE_FINAL[f] = [null, f]; });
+            Object.keys(COMPOUND_FINAL).forEach(function (pair) {
+                var compound = COMPOUND_FINAL[pair];
+                DECOMPOSE_FINAL[compound] = [pair.charAt(0), pair.charAt(1)];
+            });
+
+            // key -> [unshifted jamo, shifted jamo or null, isConsonant]
+            var KEYMAP = {
+                q: ['ㅂ', 'ㅃ', true], w: ['ㅈ', 'ㅉ', true], e: ['ㄷ', 'ㄸ', true], r: ['ㄱ', 'ㄲ', true], t: ['ㅅ', 'ㅆ', true],
+                y: ['ㅛ', null, false], u: ['ㅕ', null, false], i: ['ㅑ', null, false], o: ['ㅐ', 'ㅒ', false], p: ['ㅔ', 'ㅖ', false],
+                a: ['ㅁ', null, true], s: ['ㄴ', null, true], d: ['ㅇ', null, true], f: ['ㄹ', null, true], g: ['ㅎ', null, true],
+                h: ['ㅗ', null, false], j: ['ㅓ', null, false], k: ['ㅏ', null, false], l: ['ㅣ', null, false],
+                z: ['ㅋ', null, true], x: ['ㅌ', null, true], c: ['ㅊ', null, true], v: ['ㅍ', null, true],
+                b: ['ㅠ', null, false], n: ['ㅜ', null, false], m: ['ㅡ', null, false]
+            };
+
+            var ROWS = [
+                ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+                ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+                ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+            ];
+
+            function isValidFinal(jamo) { return FINAL_LIST.indexOf(jamo) > 0; }
+
+            function composeBlock(block) {
+                if (!block) return '';
+                var initial = block.initial, medial = block.medial, final = block.final;
+                if (initial != null && medial == null) return initial;
+                if (initial == null && medial == null) return '';
+                var iIdx = INITIAL_LIST.indexOf(initial);
+                var mIdx = MEDIAL_LIST.indexOf(medial);
+                if (iIdx === -1 || mIdx === -1) return (initial || '') + (medial || '');
+                var fIdx = final ? FINAL_LIST.indexOf(final) : 0;
+                return String.fromCharCode(0xAC00 + (iIdx * 21 + mIdx) * 28 + fIdx);
+            }
+
+            function processConsonant(cur, jamo) {
+                if (!cur || cur.initial == null) {
+                    return { commit: cur ? composeBlock(cur) : null, next: { initial: jamo, medial: null, final: null } };
+                }
+                if (cur.medial == null) {
+                    return { commit: composeBlock(cur), next: { initial: jamo, medial: null, final: null } };
+                }
+                if (cur.final == null) {
+                    if (isValidFinal(jamo)) {
+                        return { commit: null, next: { initial: cur.initial, medial: cur.medial, final: jamo } };
+                    }
+                    return { commit: composeBlock(cur), next: { initial: jamo, medial: null, final: null } };
+                }
+                var compound = COMPOUND_FINAL[cur.final + jamo];
+                if (compound) {
+                    return { commit: null, next: { initial: cur.initial, medial: cur.medial, final: compound } };
+                }
+                return { commit: composeBlock(cur), next: { initial: jamo, medial: null, final: null } };
+            }
+
+            function processVowel(cur, jamo) {
+                if (!cur || cur.initial == null) {
+                    // No pending initial consonant: a lone vowel is typed as a standalone
+                    // jamo (never gets an implicit ㅇ), so sequences like ㅠㅠ type as-is.
+                    if (cur && cur.medial != null) {
+                        var compoundStart = COMPOUND_VOWEL[cur.medial + jamo];
+                        if (compoundStart) {
+                            return { commit: null, next: { initial: null, medial: compoundStart, final: null } };
+                        }
+                    }
+                    return { commit: cur ? composeBlock(cur) : null, next: { initial: null, medial: jamo, final: null } };
+                }
+                if (cur.medial == null) {
+                    return { commit: null, next: { initial: cur.initial, medial: jamo, final: null } };
+                }
+                if (cur.final == null) {
+                    var compoundV = COMPOUND_VOWEL[cur.medial + jamo];
+                    if (compoundV) {
+                        return { commit: null, next: { initial: cur.initial, medial: compoundV, final: null } };
+                    }
+                    return { commit: composeBlock(cur), next: { initial: null, medial: jamo, final: null } };
+                }
+                var decomp = DECOMPOSE_FINAL[cur.final] || [null, cur.final];
+                var keepFinal = decomp[0];
+                var carry = decomp[1];
+                var finished = composeBlock({ initial: cur.initial, medial: cur.medial, final: keepFinal });
+                return { commit: finished, next: { initial: carry, medial: jamo, final: null } };
+            }
+
+            function backspaceBlock(cur) {
+                if (!cur) return null;
+                if (cur.final) {
+                    var decomp = DECOMPOSE_FINAL[cur.final];
+                    if (decomp && decomp[0]) {
+                        return { initial: cur.initial, medial: cur.medial, final: decomp[0] };
+                    }
+                    return { initial: cur.initial, medial: cur.medial, final: null };
+                }
+                if (cur.medial) {
+                    var found = null;
+                    Object.keys(COMPOUND_VOWEL).forEach(function (pair) {
+                        if (COMPOUND_VOWEL[pair] === cur.medial) found = pair;
+                    });
+                    if (found) {
+                        return { initial: cur.initial, medial: found.charAt(0), final: null };
+                    }
+                    // No initial consonant was ever typed for this vowel -> clear entirely
+                    // instead of leaving an empty pending block behind.
+                    return cur.initial ? { initial: cur.initial, medial: null, final: null } : null;
+                }
+                return null; // only initial was set -> clear entirely
+            }
+
+            // ---- state ----
+            // textBefore/textAfter split the text around the point where the user is actively
+            // composing (cur), so typing/backspace work correctly wherever the cursor is - not
+            // just at the very end.
+            var textBefore = '';
+            var textAfter = '';
+            var cur = null;
+            var koreanMode = true;
+            var shiftHeld = false;
+            var physicalShiftHeld = false;
+
+            var output = document.getElementById('output');
+            var modeBadge = document.getElementById('modeBadge');
+
+            var FONT_MIN = 14, FONT_MAX = 34, FONT_STEP = 2;
+            var FONT_STORAGE_KEY = 'hangul-typer-font-size';
+
+            function loadStoredFontSize() {
+                try {
+                    var v = parseInt(localStorage.getItem(FONT_STORAGE_KEY), 10);
+                    return (v >= FONT_MIN && v <= FONT_MAX) ? v : null;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function saveStoredFontSize(size) {
+                try { localStorage.setItem(FONT_STORAGE_KEY, String(size)); } catch (e) { /* storage unavailable */ }
+            }
+
+            var fontSize = loadStoredFontSize() || 19;
+            output.style.fontSize = fontSize + 'px';
+
+            function setFontSize(size) {
+                fontSize = Math.max(FONT_MIN, Math.min(FONT_MAX, size));
+                output.style.fontSize = fontSize + 'px';
+                saveStoredFontSize(fontSize);
+            }
+
+            document.getElementById('fontDown').addEventListener('click', function () {
+                setFontSize(fontSize - FONT_STEP);
+                output.focus();
+            });
+            document.getElementById('fontUp').addEventListener('click', function () {
+                setFontSize(fontSize + FONT_STEP);
+                output.focus();
+            });
+
+            // ---- cached textarea height (persists manual drag-resize) ----
+            var HEIGHT_STORAGE_KEY = 'hangul-typer-textarea-height';
+
+            function loadStoredHeight() {
+                try {
+                    var v = parseInt(localStorage.getItem(HEIGHT_STORAGE_KEY), 10);
+                    return (v >= 100 && v <= 4000) ? v : null;
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function saveStoredHeight(px) {
+                try { localStorage.setItem(HEIGHT_STORAGE_KEY, String(px)); } catch (e) { /* storage unavailable */ }
+            }
+
+            var storedHeight = loadStoredHeight();
+            if (storedHeight) { output.style.height = storedHeight + 'px'; }
+
+            if (window.ResizeObserver) {
+                var heightObserver = new ResizeObserver(function () {
+                    saveStoredHeight(output.offsetHeight);
+                });
+                heightObserver.observe(output);
+            }
+
+            // ---- cached keyboard show/hide ----
+            var KB_VISIBLE_KEY = 'hangul-typer-kb-visible';
+
+            function loadStoredKbVisible() {
+                try {
+                    var v = localStorage.getItem(KB_VISIBLE_KEY);
+                    return v === null ? true : v === '1';
+                } catch (e) {
+                    return true;
+                }
+            }
+
+            function saveStoredKbVisible(visible) {
+                try { localStorage.setItem(KB_VISIBLE_KEY, visible ? '1' : '0'); } catch (e) { /* storage unavailable */ }
+            }
+
+            var keyboardEl = document.getElementById('keyboard');
+            var kbToggleBtn = document.getElementById('kbToggle');
+
+            function setKeyboardVisible(visible) {
+                keyboardEl.style.display = visible ? '' : 'none';
+                kbToggleBtn.classList.toggle('active', !visible);
+                saveStoredKbVisible(visible);
+            }
+
+            kbToggleBtn.addEventListener('click', function () {
+                setKeyboardVisible(keyboardEl.style.display === 'none');
+                output.focus();
+            });
+
+            setKeyboardVisible(loadStoredKbVisible());
+
+            function render() {
+                output.value = textBefore + composeBlock(cur) + textAfter;
+                var pos = (textBefore + composeBlock(cur)).length;
+                output.selectionStart = output.selectionEnd = pos;
+            }
+
+            // If the cursor moved (arrow keys, mouse click, Home/End...) since our last render(),
+            // or there's an active selection, flatten the in-progress syllable and re-split
+            // textBefore/textAfter around the new cursor/selection, so typing/backspace continue
+            // exactly where the user is now instead of always at the old spot.
+            // Returns true if an actual (non-collapsed) selection was consumed/deleted.
+            function syncPosition() {
+                var start = output.selectionStart, end = output.selectionEnd;
+                if (start == null || end == null) return false;
+                var hadSelection = start !== end;
+                var expected = (textBefore + composeBlock(cur)).length;
+                if (!hadSelection && start === expected) return false; // nothing moved
+                var full = textBefore + composeBlock(cur) + textAfter;
+                textBefore = full.slice(0, start);
+                textAfter = full.slice(end);
+                cur = null;
+                return hadSelection;
+            }
+
+            // Undo/redo history. We manage our own stack because the composed Hangul text is
+            // written to the textarea programmatically (output.value = ...), which does not
+            // participate in the browser's native undo stack.
+            var undoStack = [];
+            var redoStack = [];
+
+            function snapshot() {
+                return {
+                    textBefore: textBefore,
+                    textAfter: textAfter,
+                    cur: cur ? { initial: cur.initial, medial: cur.medial, final: cur.final } : null
+                };
+            }
+
+            function pushUndo() {
+                undoStack.push(snapshot());
+                if (undoStack.length > 500) undoStack.shift();
+                redoStack.length = 0;
+            }
+
+            function restore(snap) {
+                textBefore = snap.textBefore;
+                textAfter = snap.textAfter;
+                cur = snap.cur ? { initial: snap.cur.initial, medial: snap.cur.medial, final: snap.cur.final } : null;
+                render();
+            }
+
+            function undo() {
+                if (!undoStack.length) return;
+                redoStack.push(snapshot());
+                restore(undoStack.pop());
+            }
+
+            function redo() {
+                if (!redoStack.length) return;
+                undoStack.push(snapshot());
+                restore(redoStack.pop());
+            }
+
+            function handleLetterKey(letter, shift) {
+                var entry = KEYMAP[letter];
+                if (!entry) return;
+                syncPosition();
+                var jamo = (shift && entry[1]) ? entry[1] : entry[0];
+                var isConsonant = entry[2];
+                var result = isConsonant ? processConsonant(cur, jamo) : processVowel(cur, jamo);
+                if (result.commit) textBefore += result.commit;
+                cur = result.next;
+                render();
+            }
+
+            function handlePassthroughChar(ch) {
+                syncPosition();
+                if (cur) { textBefore += composeBlock(cur); cur = null; }
+                textBefore += ch;
+                render();
+            }
+
+            function handleBackspace() {
+                if (syncPosition()) { render(); return; }
+                if (cur) {
+                    cur = backspaceBlock(cur);
+                } else if (textBefore.length) {
+                    textBefore = textBefore.slice(0, -1);
+                }
+                render();
+            }
+
+            function handleEnter() {
+                syncPosition();
+                if (cur) { textBefore += composeBlock(cur); cur = null; }
+                textBefore += '\n';
+                render();
+            }
+
+            output.addEventListener('keydown', function (e) {
+                var mod = e.ctrlKey || e.metaKey;
+
+                if (mod && e.code === 'Space') {
+                    e.preventDefault();
+                    setMode(!koreanMode);
+                    return;
+                }
+
+                if (!koreanMode) return; // english mode: fully native typing (native undo/redo too)
+
+                if (mod && !e.shiftKey && (e.key === 'z' || e.key === 'Z')) {
+                    e.preventDefault();
+                    undo();
+                    return;
+                }
+                if (mod && (e.key === 'y' || e.key === 'Y' || (e.shiftKey && (e.key === 'z' || e.key === 'Z')))) {
+                    e.preventDefault();
+                    redo();
+                    return;
+                }
+                if (mod && (e.key === 'x' || e.key === 'X')) {
+                    pushUndo();
+                    return; // let native cut proceed; the 'input' listener resyncs our state
+                }
+                if (e.ctrlKey || e.metaKey || e.altKey) return; // other browser shortcuts (copy, select-all...)
+
+                if (e.key === 'Delete') { pushUndo(); return; } // let native delete proceed; resynced via 'input'
+                if (e.key === 'Backspace') { e.preventDefault(); pushUndo(); handleBackspace(); return; }
+                if (e.key === 'Enter') { e.preventDefault(); pushUndo(); handleEnter(); return; }
+                if (e.key === ' ') { e.preventDefault(); pushUndo(); handlePassthroughChar(' '); return; }
+
+                // Use physical key position (layout-independent) for jamo mapping.
+                if (e.code && /^Key[A-Z]$/.test(e.code)) {
+                    var letter = e.code.slice(3).toLowerCase();
+                    if (KEYMAP[letter]) {
+                        e.preventDefault();
+                        pushUndo();
+                        handleLetterKey(letter, e.shiftKey);
+                        return;
+                    }
+                }
+
+                if (e.key.length === 1) {
+                    e.preventDefault();
+                    pushUndo();
+                    handlePassthroughChar(e.key);
+                    return;
+                }
+                // otherwise (arrows, Tab, Home/End, F-keys...) let default happen; syncPosition()
+                // will pick up the new cursor position the next time a key above is handled.
+            });
+
+            // Safety net: catches any native edit we allow through (Delete key, Ctrl/Cmd+X cut,
+            // drag-and-drop, mobile autocomplete, etc.) that changes the textarea's value without
+            // going through our own render(). Programmatic `output.value = ...` assignments in
+            // render() do NOT fire 'input', so this only reacts to genuine native edits.
+            output.addEventListener('input', function () {
+                var expected = textBefore + composeBlock(cur) + textAfter;
+                if (output.value !== expected) {
+                    var pos = output.selectionStart != null ? output.selectionStart : output.value.length;
+                    var endPos = output.selectionEnd != null ? output.selectionEnd : pos;
+                    textBefore = output.value.slice(0, pos);
+                    textAfter = output.value.slice(endPos);
+                    cur = null;
+                }
+            });
+
+            output.addEventListener('paste', function (e) {
+                e.preventDefault();
+                var text = (e.clipboardData || window.clipboardData).getData('text');
+                pushUndo();
+                syncPosition();
+                if (cur) { textBefore += composeBlock(cur); cur = null; }
+                textBefore += text;
+                render();
+            });
+
+            function setMode(korean) {
+                koreanMode = korean;
+                if (korean) {
+                    var pos = output.selectionStart != null ? output.selectionStart : output.value.length;
+                    var endPos = output.selectionEnd != null ? output.selectionEnd : pos;
+                    textBefore = output.value.slice(0, pos); // adopt whatever is currently shown
+                    textAfter = output.value.slice(endPos);
+                    cur = null;
+                }
+                undoStack.length = 0;
+                redoStack.length = 0;
+                modeBadge.textContent = korean ? 'KR' : 'EN';
+                modeBadge.classList.toggle('off', !korean);
+                output.focus();
+            }
+
+            function buildKeyboard() {
+                var kb = document.getElementById('keyboard');
+
+                ROWS.forEach(function (row) {
+                    var rowDiv = document.createElement('div');
+                    rowDiv.className = 'key-row';
+                    row.forEach(function (letter) {
+                        var entry = KEYMAP[letter];
+                        var btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'key';
+
+                        var jamoSpan = document.createElement('span');
+                        jamoSpan.className = 'jamo';
+                        jamoSpan.textContent = entry[0];
+                        btn.appendChild(jamoSpan);
+
+                        if (entry[1]) {
+                            var shiftSpan = document.createElement('span');
+                            shiftSpan.className = 'shift-jamo';
+                            shiftSpan.textContent = entry[1];
+                            btn.appendChild(shiftSpan);
+                        }
+
+                        var letterSpan = document.createElement('span');
+                        letterSpan.className = 'letter';
+                        letterSpan.textContent = letter;
+                        btn.appendChild(letterSpan);
+
+                        btn.addEventListener('click', function () {
+                            pushUndo();
+                            handleLetterKey(letter, shiftHeld || physicalShiftHeld);
+                            output.focus();
+                        });
+                        rowDiv.appendChild(btn);
+                    });
+                    kb.appendChild(rowDiv);
+                });
+
+                var bottomRow = document.createElement('div');
+                bottomRow.className = 'key-row bottom-row';
+
+                var shiftBtn = document.createElement('button');
+                shiftBtn.type = 'button';
+                shiftBtn.id = 'shiftToggle';
+                shiftBtn.className = 'key special';
+                shiftBtn.textContent = '⇧';
+                shiftBtn.addEventListener('click', function () {
+                    shiftHeld = !shiftHeld;
+                    shiftBtn.classList.toggle('active', shiftHeld || physicalShiftHeld);
+                });
+                bottomRow.appendChild(shiftBtn);
+
+                // Keep the on-screen Shift key visually in sync with the real Shift key.
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Shift') {
+                        physicalShiftHeld = true;
+                        shiftBtn.classList.add('active');
+                    }
+                });
+                document.addEventListener('keyup', function (e) {
+                    if (e.key === 'Shift') {
+                        physicalShiftHeld = false;
+                        shiftBtn.classList.toggle('active', shiftHeld);
+                    }
+                });
+
+                var spaceBtn = document.createElement('button');
+                spaceBtn.type = 'button';
+                spaceBtn.className = 'key special space';
+                spaceBtn.textContent = '';
+                spaceBtn.addEventListener('click', function () {
+                    pushUndo();
+                    handlePassthroughChar(' ');
+                    output.focus();
+                });
+                bottomRow.appendChild(spaceBtn);
+
+                var backspaceBtn = document.createElement('button');
+                backspaceBtn.type = 'button';
+                backspaceBtn.className = 'key special';
+                backspaceBtn.textContent = '⌫';
+                backspaceBtn.addEventListener('click', function () {
+                    pushUndo();
+                    handleBackspace();
+                    output.focus();
+                });
+                bottomRow.appendChild(backspaceBtn);
+
+                var enterBtn = document.createElement('button');
+                enterBtn.type = 'button';
+                enterBtn.className = 'key special';
+                enterBtn.textContent = '⏎';
+                enterBtn.addEventListener('click', function () {
+                    pushUndo();
+                    handleEnter();
+                    output.focus();
+                });
+                bottomRow.appendChild(enterBtn);
+
+                kb.appendChild(bottomRow);
+            }
+
+            buildKeyboard();
+            render();
+            output.focus();
+        })();
+    </script>
+</body>
+
+</html>

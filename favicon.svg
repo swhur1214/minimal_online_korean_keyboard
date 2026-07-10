@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Korean Keyboard">
+  <rect width="64" height="64" rx="12" fill="#1e1f23"/>
+  <rect x="6" y="6" width="52" height="52" rx="9" fill="none" stroke="#7c9bff" stroke-width="4"/>
+  <text x="32" y="43"
+        text-anchor="middle"
+        font-family="-apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif"
+        font-size="30"
+        font-weight="800"
+        fill="#e8e8ec">한</text>
+</svg>
