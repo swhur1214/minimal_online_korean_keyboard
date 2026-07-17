@@ -1,0 +1,245 @@
+:root {
+    --bg: #1e1f23;
+    --text: #e8e8ec;
+    --muted: #97979f;
+    --border: rgba(255, 255, 255, 0.11);
+    --hover: rgba(255, 255, 255, 0.07);
+    --active: rgba(255, 255, 255, 0.15);
+    --accent: #7c9bff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", "Noto Sans KR", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 6vh 20px 40px;
+}
+
+.wrap {
+    width: 100%;
+    max-width: 620px;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.font-btn {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 4px 8px;
+    line-height: 1;
+}
+
+.font-btn:hover {
+    background: var(--hover);
+    color: var(--text);
+}
+
+.font-btn.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+}
+
+.title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    color: var(--muted);
+}
+
+.hint {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.mode-badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 4px 9px;
+    border-radius: 3px;
+    border: none;
+    color: var(--bg);
+    background: var(--text);
+}
+
+.mode-badge.off {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 10px 0 16px;
+}
+
+.toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+textarea {
+    width: 100%;
+    height: 440px;
+    font-size: 19px;
+    line-height: 1.6;
+    padding: 16px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--text);
+    resize: vertical;
+    font-family: inherit;
+}
+
+textarea::placeholder {
+    color: var(--muted);
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.key-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+}
+
+.key {
+    position: relative;
+    width: 48px;
+    height: 52px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background .12s ease;
+}
+
+.key:hover {
+    background: var(--hover);
+}
+
+.key:active {
+    background: var(--active);
+}
+
+.key .jamo {
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.key .letter {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+.key .shift-jamo {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    font-size: 9px;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.key.special {
+    width: auto;
+    min-width: 52px;
+    padding: 0 12px;
+    font-size: 15px;
+    color: var(--muted);
+}
+
+.key.special.space {
+    min-width: 220px;
+}
+
+.key.special#shiftToggle.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-top: 6vh;
+    }
+
+    textarea {
+        height: 320px;
+    }
+
+    .key {
+        width: 28px;
+        height: 42px;
+    }
+
+    .key .jamo {
+        font-size: 14px;
+    }
+
+    .key .letter {
+        font-size: 7px;
+    }
+
+    .key .shift-jamo {
+        font-size: 7px;
+        top: 2px;
+        right: 3px;
+    }
+
+    .key.special.space {
+        min-width: 140px;
+    }
+}
