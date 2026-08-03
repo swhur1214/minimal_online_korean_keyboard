@@ -148,7 +148,7 @@
     var output = document.getElementById('output');
     var modeBadge = document.getElementById('modeBadge');
 
-    var FONT_MIN = 14, FONT_MAX = 34, FONT_STEP = 2;
+    var FONT_MIN = 12, FONT_MAX = 72, FONT_STEP = 2;
     var FONT_STORAGE_KEY = 'hangul-typer-font-size';
     var storedFontSize = parseInt(readStored(FONT_STORAGE_KEY), 10);
     var fontSize = (storedFontSize >= FONT_MIN && storedFontSize <= FONT_MAX) ? storedFontSize : 19;
